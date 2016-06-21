@@ -1,45 +1,36 @@
 @extends('layouts.index')
 @section('container')
-    <link rel="stylesheet" href="plugins/jquery-ui/jquery-ui.css" />
     <section class="main no-padding">
         @include('include/profileHeader')
         <div class="container">
             <div class="row">
-                @section('LeftMenuMyProfileCoverLetter','active-profile')
+                @section('LeftMenuMyProfileAboutMe','active-profile')
                 @include('include.profileLeftMenu')
                 <div class="col-md-9 col-sm-9">
-                    @if($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach($errors->all() as $error)
-                                    <li>{!! $error !!}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
+                    @include('include.errorSection')
                 </div>
                 <div class="col-md-9 col-sm-9">
-                    <form action="{!! route('coverLetter.update',$coverLetter->id) !!}" method="post">
+                    <form action="{!! route('about.me.update',$about->id) !!}" method="post">
                         <input type="hidden" value="{!! csrf_token() !!}" name="_token">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
-                                    <a href="#collapseB1" data-toggle="collapse">Cover Latter Add</a>
+                                    <a href="#collapseB1" data-toggle="collapse">About Me Edit</a>
                                 </h4>
                             </div>
                             <div class="panel-body">
                                 <div class="form-group">
-                                    <label for="coverLetterTitle">Title</label>
-                                    <input type="text" id="coverLetterTitle" class="form-control" name="coverLetterTitle" value="{!! $coverLetter->coverLetterTitle !!}">
+                                    <label for="aboutTitle">Title</label>
+                                    <input type="text" id="aboutTitle" class="form-control" name="aboutTitle" value="{!! $about->aboutTitle !!}">
                                 </div>
                                 <div class="form-group">
-                                    <label for="coverLetter">Cover Letter</label>
-                                    <textarea id="coverLetter" class="form-control" rows="8" name="coverLetter">{!! $coverLetter->actualText !!}</textarea>
+                                    <label for="aboutText">About Me Text</label>
+                                    <textarea id="aboutText" class="form-control" rows="8" name="aboutText">{!! $about->actualText !!}</textarea>
                                 </div>
                             </div>
                             <div class="panel-footer">
                                 <div class="form-group">
-                                    <button class="btn btn-success btn-block"><i class="fa fa-save"></i> Save Cover latter</button>
+                                    <button class="btn btn-success btn-block"><i class="fa fa-save"></i> Update About Me</button>
                                 </div>
                             </div>
                         </div>

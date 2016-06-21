@@ -8,15 +8,7 @@
                 @section('LeftMenuMyProfileExperience','active-profile')
                 @include('include.profileLeftMenu')
                 <div class="col-md-9 col-sm-9">
-                    @if($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach($errors->all() as $error)
-                                    <li>{!! $error !!}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
+                    @include('include.errorSection')
                 </div>
                 <div class="col-xs-9 m-b10">
                     <a href="{!! route('experience.add') !!}" class="btn btn-success pull-right">Add Experience</a>

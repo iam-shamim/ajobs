@@ -1,36 +1,21 @@
 @extends('layouts.index')
 @section('container')
-    <link rel="stylesheet" href="plugins/jquery-ui/jquery-ui.css" />
-    <section class="main no-padding">
-        @include('include/profileHeaderView')
+    <section class="main">
         <div class="container">
             <div class="row">
-                @section('LeftMenuMyProfileRecommendation','active-profile')
-                @include('include.profileLeftMenuView')
-                <div class="col-md-9 col-sm-9">
-                    @if($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach($errors->all() as $error)
-                                    <li>{!! $error !!}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-                </div>
-                <div class="col-sm-9">
-                    <form action="{!! route('recommendation.store',$id) !!}" method="post">
+                <div class="col-md-10 col-md-offset-1">
+                    <form action="{!! '' !!}" method="post">
                         <input type="hidden" name="_token" value="{!! csrf_token() !!}">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4 class="panel-title p-b10">
-                                    <a href="#collapseB1" data-toggle="collapse">New Recommendation</a>
+                                    <a href="#collapseB1" data-toggle="collapse">Job Application</a>
                                 </h4>
 
                             </div>
                             <div class="panel-body">
                                 <div class="form-group">
-                                    <strong>To</strong>: {!! $data->firstName !!} {!! $data->middleName!!} {!! $data->lastName  !!}
+                                    <div><strong>Job Title</strong>: {!! $job->jobTitle !!}</div>
                                 </div>
                                 <div class="form-group">
                                     <label for="recommendation">Recommendation</label>

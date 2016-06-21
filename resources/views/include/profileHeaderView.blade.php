@@ -1,9 +1,7 @@
+@section('title',$data->firstName.' '.$data->middleName.' '.$data->lastName)
 <div class="account-header">
     <div class="container">
         <div class="row">
-            @if(Auth::check())
-
-            @endif
             <div class="col-sm-4 col-md-3 col-lg-2">
                 <!-- User avatar -->
                 <div class="profile_avatar">

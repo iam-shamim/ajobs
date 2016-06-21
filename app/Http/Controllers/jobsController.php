@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\model\applicants;
+use App\model\coverLetter;
 use App\model\featuredApply;
 use App\model\job;
 use Illuminate\Http\Request;
@@ -9,11 +11,144 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use DB;
 use Validator;
-
+use Auth;
+use App\traits\jobCategoriesWithJobsCount;
 class jobsController extends Controller{
+    use jobCategoriesWithJobsCount;
     public function index(){
         $currentUserData=session('profilesData');
         return view('jobs_index',['data'=>$currentUserData]);
+    }
+    public function ownJobsList($id){
+        $currentUserData=session('profilesData');
+        $employer=DB::table('employers')
+            ->where('userID',$id)
+            ->first();
+        $employerID=$employer->id;
+        $jobs=DB::table('jobs')
+            ->select(DB::raw('jobs.jobTitle,jobs.id AS jobID,employers.id AS employersID,count(`job_applicants`.`id`) AS applicantsCount'))
+            ->leftJoin('categories','jobs.jobCategory','=','categories.id')
+            ->leftJoin('employers','jobs.employerID','=','employers.id')
+            ->leftJoin('companies','employers.companyID','=','companies.id')
+            ->leftJoin('job_applicants','job_applicants.jobID','=','jobs.id')
+            ->where('jobs.employerID',$employerID)
+            ->orderBy('jobs.id','DESC')
+            ->groupBy('jobs.id')
+            ->paginate(20);
+        $jobsIdStore=[];
+        $jobsData=$jobs->items();
+        while((list($key,$val)=each($jobsData))){
+            $jobsIdStore[]=$val->jobID;
+        }
+        $interviewsCount=DB::table('interviews')
+            ->select(DB::raw('count(jobID) as total,jobID'))
+            ->whereIn('jobID',$jobsIdStore)
+            ->groupBy('jobID')
+            ->lists('total','jobID');
+        $unseen=DB::table('job_applicants')
+            ->select(DB::raw('count(jobID) as total,jobID'))
+            ->whereIn('jobID',$jobsIdStore)
+            ->where('status','Applied')
+            ->groupBy('jobID')
+            ->lists('total','jobID');
+        $shortList=DB::table('job_applicants')
+            ->select(DB::raw('count(jobID) as total,jobID'))
+            ->whereIn('jobID',$jobsIdStore)
+            ->where('status','ShortListed')
+            ->groupBy('jobID')
+            ->lists('total','jobID');
+
+        return view('ownJobsList',['data'=>$currentUserData,'jobs'=>$jobs,'interviewsCount'=>$interviewsCount,'unseen'=>$unseen,'shortList'=>$shortList]);
+    }
+    public function newFeaturedJob(){
+        $category=$this->categories();
+        $hotJobs=DB::table('jobs')->select(['jobs.*','categories.categoryName','companies.companyName','companies.logo','employers.id AS employersID'])->where('jobs.featuredJob','=','1')->leftJoin('categories','jobs.jobCategory','=','categories.id')->leftJoin('employers','jobs.employerID','=','employers.id')->leftJoin('companies','employers.companyID','=','companies.id')->orderBy('jobs.id','DESC')->paginate(1);
+        return view('newFeaturedJob',['hotJobs'=>$hotJobs,'category'=>$category]);
+    }
+    public function newJobs(){
+        $category=$this->categories();
+        $jobs=DB::table('jobs')->select(['jobs.*','categories.categoryName'])->leftJoin('categories','jobs.jobCategory','=','categories.id')->orderBy('jobs.id','DESC')->paginate(15);
+        return view('newJobsQuery',['jobs'=>$jobs,'category'=>$category]);
+    }
+    public function jobCompany($id){
+        $category=$this->categories();
+        $company=DB::table('companies')->select('companyName')->leftJoin('employers','companies.id','=','employers.companyID')->where('employers.id',$id)->first();
+        if (!$company){
+            abort(404,'Company Not Found');
+        }
+        $jobs=DB::table('jobs')
+            ->select(['jobs.*','categories.categoryName','companies.companyName'])
+            ->leftJoin('categories','jobs.jobCategory','=','categories.id')
+            ->leftJoin('employers','jobs.employerID','=','employers.id')
+            ->leftJoin('companies','companies.id','=','employers.companyID')
+            ->where('employers.id',$id)
+            ->orderBy('jobs.id','DESC')->paginate(15);
+
+        return view('JobListWIthCompany',['jobs'=>$jobs,'category'=>$category,'company'=>$company]);
+    }
+    public function jobSearch(Request $input){
+        $jobKeyword = $input->jobKeyword;
+        $jobLocation = $input->jobLocation;
+        $keyword=$jobKeyword.' '.$jobLocation;
+        $whereRaw='';
+        $whereData=[];
+        $urlParameters=[];
+        $urlParameters['jobKeyword']=$jobKeyword;
+        $urlParameters['jobLocation']=$jobLocation;
+
+        $experienceData=(isset($input->experience))?$input->experience:0;
+        $whereRaw.='`jobs`.`minimumExperience` >=? ' ;
+        $whereData[]=$experienceData;
+        $urlParameters['experience']=$experienceData;
+        if(isset($input->category)  AND is_numeric($input->category) AND $input->category){
+            $urlParameters['category']=$input->category;
+            $whereRaw.='AND `jobs`.`jobCategory` =? ' ;
+            $whereData[]=$input->category;
+        }else{
+            $urlParameters['category']='any';
+        }
+
+        $jobTypeLists=['fullTime'=>'FullTime','partTime'=>'PartTime','internship'=>'Internship','contractual'=>'Contractual'];
+        $sl=0;
+        while(list($key,$value)=each($jobTypeLists)){
+            if(isset($input->$key)){
+                $urlParameters[$key]='on';
+                $$key='checked';
+                $sl++;
+                if($sl==1){
+                    $whereRaw.='AND (';
+                    $whereRaw.="`jobs`.`jobType` =? ";
+                    $whereData[]=$value;
+                }else{
+                    $whereRaw.="OR `jobs`.`jobType` =? ";
+                    $whereData[]=$value;
+                }
+            }else{
+                $$key=null;
+            }
+
+        }
+        if($sl){
+            $whereRaw.=')';
+        }else{
+            $fullTime=$partTime=$internship=$contractual='checked';
+        }
+        if(empty($jobKeyword) AND empty($jobLocation)  AND isset($input->category)){
+            $jobs=DB::table('jobs')
+                ->select(['jobs.*','categories.categoryName','companies.companyName','companies.logo'])
+                ->whereRaw($whereRaw,$whereData)
+                ->leftJoin('categories','jobs.jobCategory','=','categories.id')->leftJoin('employers','jobs.employerID','=','employers.id')->leftJoin('companies','employers.companyID','=','companies.id')->orderBy('jobs.id','DESC')->paginate(15);
+        }else{
+            $jobs = DB::table('jobs')
+                ->select(['jobs.*', 'categories.categoryName', 'companies.companyName', 'companies.logo'])
+                ->whereRaw($whereRaw, $whereData)
+                ->leftJoin('categories', 'jobs.jobCategory', '=', 'categories.id')->leftJoin('employers', 'jobs.employerID', '=', 'employers.id')->leftJoin('companies', 'employers.companyID', '=', 'companies.id')->whereRaw("MATCH(jobTitle,jobSummary,jobDescription,jobLocation) AGAINST(? IN BOOLEAN MODE)", [$keyword])->paginate(15);
+        }
+        $category=DB::table('categories')->lists('categoryName','id');
+        $categoryGet=(isset($input->category))?$input->category:'any';
+        $experienceGet=(isset($input->experience))?$input->experience:0;
+        $experienceText=(isset($input->experience))?'checked':($input->experience>0)?$input->experience.' Years':'0 Year';
+        return view('jobsSearch',['urlParameters'=>$urlParameters,'jobs'=>$jobs,'jobKeyword'=>$jobKeyword,'jobLocation'=>$jobLocation,'category'=>$category,'fullTime'=>$fullTime,'partTime'=>$partTime,'internship'=>$internship,'contractual'=>$contractual,'experienceGet'=>$experienceGet,'experienceText'=>$experienceText,'categoryGet'=>$categoryGet]);
     }
     public function create(){
         $userID=\Auth::user()->id;
@@ -85,7 +220,14 @@ class jobsController extends Controller{
         return redirect()->back();
     }
     public function view($id){
-        //SELECT `jobs`.*,`companies`.* FROM `jobs` LEFT JOIN `employers` ON `jobs`.`employerID`=employers.id LEFT JOIN `companies` ON `employers`.`companyID`=companies.id
+        $applicantsStatus=false;
+        if(Auth::check()){
+            $currentUserData=session('profilesData');
+
+            $applicantsCount=applicants::where('profileID',$currentUserData->id)->where('jobID',$id)->count();
+
+            $applicantsStatus=($applicantsCount)?true:false;
+        }
         $job=DB::table('jobs')->select(['jobs.*','companies.*','employers.*','jobs.created_at AS jobsPosted','companies.id AS companiesID','employers.id AS employersID'])->where('jobs.id',$id)
             ->leftJoin('employers','jobs.employerID','=','employers.id')
             ->leftJoin('companies','employers.companyID','=','companies.id')
@@ -93,7 +235,8 @@ class jobsController extends Controller{
         if(!$job){
             return view('job404');
         }
-        return view('jobsView',['job'=>$job,'id'=>$id]);
+        $job->jobType=preg_replace('/[[:upper:]]+/',' $0',$job->jobType);
+        return view('jobsView',['job'=>$job,'id'=>$id,'applicantsStatus'=>$applicantsStatus]);
     }
     public function destroy($id){
         $userID=\Auth::user()->id;
@@ -163,5 +306,37 @@ class jobsController extends Controller{
         DB::table('featured_apply')->where('id',$id)->delete();
         session()->flash('success','Featured request successfully delete.');
         return redirect()->back();
+    }
+    public function application(Request $input,$id){
+        $currentUserData=session('profilesData');
+        $userID=\Auth::user()->id;
+        $validator=Validator::make($input->all(),[
+            'coverLetter'=>'required|min:50',
+        ]);
+        if($validator->fails()){
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+        $applicantsCount=applicants::where('profileID',$currentUserData->id)->where('jobID',$id)->count();
+        if($applicantsCount){
+            return redirect(route('jobs.view',['id'=>$id]));
+        }
+        $coverLetter=new coverLetter();
+        $coverLetter->coverLetter=$input->coverLetter;
+        $coverLetter->save();
+        $coverLetterID=$coverLetter->id;
+
+        $attachedResume=$input->file('attachedResume');
+        $applicants=new applicants();
+        $applicants->jobID=$id;
+        $applicants->profileID=$currentUserData->id;
+        $applicants->coverLetterID=$coverLetterID;
+        if($attachedResume){
+            $resumeName=md5(str_random(30).$userID.time().'_'.$input->file('attachedResume')->getClientOriginalName()).'.'.$input->file('attachedResume')->getClientOriginalExtension();
+            $input->file('attachedResume')->move('resume/',$resumeName);
+            $applicants->attachedResume=$resumeName;
+        }
+        $applicants->save();
+
+        return redirect(route('jobs.view',['id'=>$id]));
     }
 }

@@ -1,0 +1,1 @@
+rm -fR ~/Library/Saved\ Application\ State/com.apple.finder.savedState ~/Library/Caches/com.apple.finder; killall Finder

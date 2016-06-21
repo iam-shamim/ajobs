@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use App\Http\Requests\Request;
 
-class coverLetterRequest extends Request
+class aboutRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,8 @@ class coverLetterRequest extends Request
     public function rules()
     {
         return [
-            'coverLetterTitle'=>'required|min:10',
-            'coverLetter'=>'required|min:50'
+            'aboutTitle'=>'required|min:10',
+            'aboutText'=>'required|min:50'
         ];
     }
 }

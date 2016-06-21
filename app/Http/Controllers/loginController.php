@@ -48,17 +48,16 @@ class loginController extends Controller
             return redirect(route('login.create'))
                 ->withErrors($validator)->withInput();
         }
-        if(Auth::attempt(['userName'=>$input->userName,'password'=>$input->password])){
+        $remember=$input->remember_me;
+        if(Auth::attempt(['userName'=>$input->userName,'password'=>$input->password],$remember)){
             $userType=Auth::user()->userType;
             $userStatus=Auth::user()->userStatus;
             $id=Auth::user()->id;
             DB::table('reset_password')->where('userID',$id)->delete();
             if($userStatus=='Active'){
-                $data=DB::table('profiles')->where('userID',Auth::user()->id)->first();
-                $data->profilePic=($data->profilePic===NULL)? 'default.icon.png':$data->profilePic;
-                $input->session()->put(['profilesData'=>$data]);
-                $input->session()->put(['profilesID'=>$data->id]);
-
+                if(isset($input->redirectTo)){
+                    return redirect()->intended($input->redirectTo);
+                }
 
                 return redirect()->intended(url('/profile'));
             }else if($userStatus=='InActive'){

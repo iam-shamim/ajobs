@@ -3,27 +3,30 @@ Route::group(['prefix'=>'ajax','as'=>'ajax.'], function () {
     Route::get('education/search',['as'=>'education.search','uses'=>'educationController@ajaxSearch']);
     Route::get('company/search',['as'=>'company.search','uses'=>'experienceController@ajaxSearch']);
 });
-Route::group(['prefix'=>'view','as'=>'profile.view.'], function () {
-    Route::get('coverLetter/{id}',['as'=>'coverLetter','uses'=>'coverLetterController@view']);
-    Route::get('education/{id}',['as'=>'education','uses'=>'educationController@view']);
-    Route::get('experience/{id}',['as'=>'experience','uses'=>'experienceController@view']);
-    Route::get('skills/{id}',['as'=>'skills','uses'=>'profileSkillsController@view']);
-    Route::get('profile/{id}',['as'=>'profile','uses'=>'profileController@view']);
-    Route::get('recommendations/{id}',['as'=>'recommendation','uses'=>'recommendationController@view']);
-    Route::get('company/{id}',['as'=>'company','uses'=>'companyController@view']);
+Route::group(['prefix'=>'users','as'=>'profile.view.'], function () {
+    Route::get('{id}/about',['as'=>'about','uses'=>'aboutController@view'])->where(['id'=>'[0-9]+']);
+    Route::get('{id}/education',['as'=>'education','uses'=>'educationController@view'])->where(['id'=>'[0-9]+']);
+    Route::get('{id}/experience',['as'=>'experience','uses'=>'experienceController@view'])->where(['id'=>'[0-9]+']);
+    Route::get('{id}/skills',['as'=>'skills','uses'=>'profileSkillsController@view'])->where(['id'=>'[0-9]+']);
+    Route::get('{id}/profile',['as'=>'profile','uses'=>'profileController@view'])->where(['id'=>'[0-9]+']);
+    Route::get('{id}/recommendations',['as'=>'recommendation','uses'=>'recommendationController@view'])->where(['id'=>'[0-9]+']);
+    Route::get('{id}/company',['as'=>'company','uses'=>'companyController@view'])->where(['id'=>'[0-9]+']);
 });
 
-Route::group(['middleware' => ['auth']], function () {
+Route::group(['middleware' => ['auth','profileSet']], function () {
     Route::get('/logout',['as'=>'logout','uses'=>'loginController@logout']);
     Route::resource('skills','skillsController',['parameters'=> ['skills'=>'id']]);
     Route::resource('categories','categoriesController',['parameters'=> ['categories'=>'id']]);
     Route::resource('degrees','degreesController',['parameters'=> ['degrees'=>'id']]);
+    Route::get('dashboard',['as'=>'dashboard.index','uses'=>'dashboardController@index']);
+
+    // ACL
     Route::resource('user/type','userTypeController',['parameters'=> ['type'=>'id']]);
     Route::get('user/type/status/{id}/{status}',['as'=>'user.type.status','uses'=>'userTypeController@status'])->where(['id'=>'[0-9]','status'=>'enable|disable']);
     Route::resource('permission','PermissionController',['parameters'=> ['permission'=>'id']]);
     Route::resource('route','routeController',['parameters'=> ['route'=>'id']]);
     Route::get('route/status/{id}/{status}',['as'=>'route.status','uses'=>'routeController@status']);
-    Route::get('dashboard',['as'=>'dashboard.index','uses'=>'dashboardController@index']);
+    Route::resource('users','routeController',['parameters'=> ['route'=>'id']]);
 
     // profile
     Route::get('/profile',['as'=>'profile','uses'=>'profileController@index']);
@@ -46,12 +49,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('experience/add',['as'=>'experience.store','uses'=>'experienceController@store']);
     Route::delete('experience/{id}',['as'=>'experience.destroy','uses'=>'experienceController@destroy']);
 
-    //cover letter
-    Route::get('coverLetter',['as'=>'coverLetter.index','uses'=>'coverLetterController@index']);
-    Route::get('coverLetter/add',['as'=>'coverLetter.add','uses'=>'coverLetterController@add']);
-    Route::post('coverLetter/add',['as'=>'coverLetter.store','uses'=>'coverLetterController@store']);
-    Route::get('coverLetter/{id}/edit',['as'=>'coverLetter.edit','uses'=>'coverLetterController@edit']);
-    Route::post('coverLetter/{id}/edit',['as'=>'coverLetter.update','uses'=>'coverLetterController@update']);
+    //about me
+    Route::get('about',['as'=>'about.me.index','uses'=>'aboutController@index']);
+    Route::get('about/add',['as'=>'about.me.add','uses'=>'aboutController@add']);
+    Route::post('about/add',['as'=>'about.me.store','uses'=>'aboutController@store']);
+    Route::get('about/{id}/edit',['as'=>'about.me.edit','uses'=>'aboutController@edit']);
+    Route::post('about/{id}/edit',['as'=>'about.me.update','uses'=>'aboutController@update']);
 
     //recommendations
     Route::get('recommendations',['as'=>'recommendation.index','uses'=>'recommendationController@index']);
@@ -66,10 +69,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('company/create',['as'=>'company.create','uses'=>'companyController@create']);
     Route::post('company/create',['as'=>'company.store','uses'=>'companyController@store']);
     Route::get('company/{id}/delete',['as'=>'company.destroy','uses'=>'companyController@destroy']);
+
     // settings
     Route::get('settings',['as'=>'settings.index','uses'=>'settingsGeneralController@index']);
     Route::put('settings/user/Name',['as'=>'userName.update','uses'=>'settingsGeneralController@userNameUpdate']);
     Route::put('settings/password/change',['as'=>'password.update','uses'=>'settingsGeneralController@passwordUpdate']);
+    
     // jobs
     Route::get('jobs',['as'=>'jobs.index','uses'=>'jobsController@index']);
     Route::get('jobs/create',['as'=>'jobs.create','uses'=>'jobsController@create']);
@@ -78,6 +83,15 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('jobs/{id}/edit',['as'=>'jobs.update','uses'=>'jobsController@update']);
     Route::get('jobs/{id}/delete',['as'=>'jobs.destroy','uses'=>'jobsController@destroy']);
     Route::get('jobs/{id}/featured/apply',['as'=>'jobs.featured.apply','uses'=>'jobsController@applyFeatured']);
+    Route::get('jobs/list/{id}',['as'=>'my.jobs.list','uses'=>'jobsController@ownJobsList']);
+    Route::get('jobs/{id}/applicant',['as'=>'my.applicant','uses'=>'applicantInterviewController@applicant']);
+    Route::post('applicant/{id}/shortList',['as'=>'applicant.shortList','uses'=>'applicantInterviewController@shortList']);
+    Route::post('applicant/{id}/reject',['as'=>'applicant.reject','uses'=>'applicantInterviewController@reject']);
+    Route::get('jobs/{id}/applicant/shortList',['as'=>'applicant.shortList.view','uses'=>'applicantInterviewController@shortListView']);
+    Route::get('jobs/{id}/applicant/new',['as'=>'new.applicant','uses'=>'applicantInterviewController@newApplicant']);
+    Route::get('jobs/{jobsID}/applicant/{applicantID}/interview',['as'=>'interview.create','uses'=>'applicantInterviewController@interviewCreate']);
+
+
     // jobs for admin
     Route::get('jobs/{id}/remove',['as'=>'jobs.remove','uses'=>'jobsController@remove']);
     Route::get('jobs/featured/lists',['as'=>'jobs.featuredList.index','uses'=>'jobsController@featuredListIndex']);
@@ -85,6 +99,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('jobs/{id}/featured',['as'=>'jobs.featured','uses'=>'jobsController@featured']);
     Route::get('jobs/{id}/undeclared',['as'=>'jobs.undeclared','uses'=>'jobsController@undeclared']);
     Route::get('jobs/list',['as'=>'jobs.list','uses'=>'jobsController@jobList']);
+    // jobs for JobSeeker
+    Route::post('jobs/{id}/application',['as'=>'jobs.application','uses'=>'jobsController@application']);
+
 
 
 
@@ -117,12 +134,17 @@ Route::group(['middleware' => ['notAuth']], function () {
 
 
 });
-    Route::get('jobs/{id}',['as'=>'jobs.view','uses'=>'jobsController@view']);
-
-
-    Route::get('jobs/{id}',['as'=>'jobs.view','uses'=>'jobsController@view']);
     Route::get('/',['as'=>'home','uses'=> 'homeController@index']);
-    Route::get('test','test@index')->where(['id'=>'[A|B]']);
-    Route::get('test/socialite/{email}','socialiteController@findOrCreateByEmail');
-    Route::get('test/socialite/','socialiteController@test');
+    Route::get('jobs/{id}',['as'=>'jobs.view','middleware'=>'profileSet','uses'=>'jobsController@view']);
+    Route::get('new',['as'=>'newJobsQuery','uses'=>'jobsController@newJobs']);
+    Route::get('new/featured',['as'=>'newFeaturedJobsQuery','uses'=>'jobsController@newFeaturedJob']);
+    Route::get('job/search',['as'=>'jobSearch','uses'=>'jobsController@jobSearch']);
+    Route::get('job/company/{id}',['as'=>'jobCompany','uses'=>'jobsController@jobCompany']);
 
+
+
+
+    Route::get('test','test@index');
+    Route::get('test1',function(){
+        phpinfo();
+    });

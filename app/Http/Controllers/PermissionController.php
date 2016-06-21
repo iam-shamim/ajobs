@@ -21,11 +21,16 @@ class PermissionController extends Controller
         $sl=$perPage*($page-1)+1;
         $userType=DB::table('user_type')->orderBy('id', 'asc')->get();
         $routes=DB::table('routes')->orderBy('routeName', 'asc')->paginate($perPage);
+        $routesIDlist=[];
+        foreach ($routes AS $keys=>$values){
+            $routesIDlist[]=$values->id;
+        }
         $typeIdList=[];
         while (list($key,$val)=each($userType)){
             $typeIdList[]=$val->id;
         }
-        $permissionList=permission::whereIn('userTypeID',$typeIdList)->get();
+
+        $permissionList=permission::whereIn('userTypeID',$typeIdList)->whereIn('routesID',$routesIDlist)->get();
         foreach ($routes AS $keys=>$values){
             reset($userType);
             while (list($key,$val)=each($userType)){

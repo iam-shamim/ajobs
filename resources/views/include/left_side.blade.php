@@ -32,6 +32,7 @@
                 <li class="@yield('userType')"><a href="{!! route('user.type.index') !!}"><i class="fa fa-circle-o"></i>User Type</a></li>
                 <li class="@yield('permission')"><a href="{!! route('permission.index') !!}"><i class="fa fa-circle-o"></i>Permission</a></li>
                 <li class="@yield('route')"><a href="{!! route('route.index') !!}"><i class="fa fa-circle-o"></i>Route</a></li>
+                <li class="@yield('route')"><a href="{!! route('route.index') !!}"><i class="fa fa-circle-o"></i>Users</a></li>
               </ul>
             </li>
             <li class="@yield('jobsMenu') treeview">

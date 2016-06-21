@@ -12,16 +12,7 @@
                             <h1 class="logo"><i class="fa fa-recycle"></i> {!! trans('common.appName') !!}</h1>
                         </div>
                         <div class="panel-body">
-                            @if($errors->any())
-                                <div class="alert alert-danger p-l0">
-                                    <ul>
-                                        @foreach($errors->all() as $error)
-                                            <li>{!! $error !!}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                                <a href="{!! route('login.create') !!}" class="pull-right">Resend Activation Link</a>
-                            @endif
+                            @include('include.errorSection')
                             @if($success===true)
                                 <div class="panel panel-default">
                                     <div class="panel-heading text-center">Account Activated</div>

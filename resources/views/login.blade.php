@@ -31,6 +31,14 @@
                                     <input type="password" placeholder="Password" name="password" class="form-control input-lg">
                                 </div>
                                 <div class="form-group">
+                                    <div class="checkbox">
+                                        <label for="user_remember">
+                                            <input type="checkbox" id="user_remember" name="remember_me">
+                                            Remember me
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
                                     <button class="btn btn-block btn-custom">Login</button>
                                 </div>
                             </form>

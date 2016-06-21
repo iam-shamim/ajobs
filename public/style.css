@@ -27,16 +27,16 @@ hr{border-color:#D5D5D5;}
 input[type="checkbox"].styleInput  {
     display:none;
 }
-input[type="checkbox"].styleInput  + label span {
+input[type="checkbox"].styleInput  + label span:first-child {
     display:inline-block;
     width:19px;
     height:19px;
-    margin:-1px 4px 0 0;
+    margin:-4px 4px 0 0;
     vertical-align:middle;
     background:url(img/icon/check_radio_sheet.png) left top no-repeat;
     cursor:pointer;
 }
-input[type="checkbox"]:checked.styleInput + label span {
+input[type="checkbox"]:checked.styleInput + label span:first-child {
     background:url(img/icon/check_radio_sheet.png) -19px top no-repeat;
 }
 
@@ -44,18 +44,21 @@ input[type="radio"].styleInput  {
     display:none;
 }
 input[type="radio"].styleInput  + label{cursor: pointer}
-input[type="radio"].styleInput  + label span {
+input[type="radio"].styleInput  + label span:first-child {
     display:inline-block;
     width:19px;
     height:19px;
-    margin:-1px 4px 0 0;
+    margin:-4px 4px 0 0;
     vertical-align:middle;
     background:url(img/icon/check_radio_sheet.png) -38px top no-repeat;
     cursor:pointer;
 }
-input[type="radio"]:checked.styleInput + label span {
+input[type="radio"]:checked.styleInput + label span:first-child {
     background:url(img/icon/check_radio_sheet.png) -57px top no-repeat;
 }
+
+
+
 .enable{color:green;}
 .disable{color:orange;}
 .active-profile a{color:#398110}

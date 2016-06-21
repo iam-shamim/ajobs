@@ -4,6 +4,7 @@ namespace App\model;
 
 use Illuminate\Database\Eloquent\Model;
 
-class coverLetter extends Model{
-    protected $table='coverletters';
+class about extends Model
+{
+    protected $table='abouts';
 }

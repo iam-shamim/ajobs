@@ -4,15 +4,7 @@
         <div class="container">
             <div class="row m-t5">
                 <div class="col-sm-5 login-form">
-                    @if($errors->any())
-                        <div class="alert alert-danger p-l0">
-                            <ul>
-                                @foreach($errors->all() as $error)
-                                    <li>{!! $error !!}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
+                    @include('include.errorSection')
                 </div>
             </div>
             <div class="row">

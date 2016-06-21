@@ -9,7 +9,7 @@
                 <li class="@yield('LeftMenuMyProfileExperience')"><a href="{!! route('profile.view.experience',$id) !!}">Experiences</a></li>
                 <li class="@yield('LeftMenuMyProfileSkills')"><a href="{!! route('profile.view.skills',$id) !!}">Skills</a></li>
                 <li class="@yield('LeftMenuMyProfileEducation')"><a href="{!! route('profile.view.education',$id) !!}">Education</a></li>
-                <li class="@yield('LeftMenuMyProfileCoverLetter')"><a href="{!! route('profile.view.coverLetter',$id) !!}">Cover Letter</a></li>
+                <li class="@yield('LeftMenuMyProfileAbout')"><a href="{!! route('profile.view.about',$id) !!}">About</a></li>
                 <li class="@yield('LeftMenuMyProfileRecommendation')"><a href="{!! route('profile.view.recommendation',$id) !!}">Recommendations</a></li>
                 @if($userType==='Company')
                     <li class="@yield('LeftMenuMyProfileCompany')"><a href="{!! route('profile.view.company',$id) !!}">Company</a></li>

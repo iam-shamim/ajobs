@@ -12,18 +12,10 @@
 
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li class="new-ads"><a href="account_create_post" class="btn btn-ads btn-block">Advertise</a></li>
                 @if(!Auth::check())
                 <li><a href="{!! route('signup.create') !!}">Signup</a></li>
                 <li><a href="{!! route('login.create') !!}">Login</a></li>
                 @endif
-                <li class="dropdown">
-                    <a class="dropdown-toggle" href="#" data-toggle="dropdown"><strong class="caret"></strong>&nbsp;Pages</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="account_posts">My Ads</a></li>
-                        <li><a href="account_create_post">Create Ads</a></li>
-                    </ul>
-                </li>
                 @if(!Auth::check())
                 <li class="dropdown">
                     <a class="dropdown-toggle" href="#" data-toggle="dropdown"><i class="fa fa-user"></i> <strong class="caret"></strong>&nbsp;</a>
@@ -46,18 +38,17 @@
                                     <div class="input-group">
                                         <span class="input-group-addon addon-login"><i class="addon fa fa-lock"></i></span>
                                         <input type="password" placeholder="Password" name="password" required="required" class="form-control input-login">
+                                        <input type="hidden" name="redirectTo" value="{!! $_SERVER['REQUEST_URI'] !!}">
                                     </div>
                                 </div>
-                                <!--
                                 <div class="form-group">
                                     <div class="checkbox">
                                         <label class="string optional" for="user_remember_me">
-                                            <input type="checkbox" id="user_remember_me" style="">
+                                            <input type="checkbox" id="user_remember_me" name="remember_me">
                                             Remember me
                                         </label>
                                     </div>
                                 </div>
-                                -->
                                 <input type="submit" class="btn btn-custom btn-block" value="Sign In">
                                 <div><p class="text-center">Login With</p></div>
                                 <div class="text-center">
