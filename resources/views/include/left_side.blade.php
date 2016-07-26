@@ -24,6 +24,15 @@
                 <li class="@yield('degreeSub')"><a href="{!! route('degrees.index') !!}"><i class="fa fa-graduation-cap"></i>Degrees</a></li>
               </ul>
             </li>
+            <li class="@yield('jobsMenu') treeview">
+              <a href="#">
+                <i class="fa fa-briefcase"></i> <span>Jobs</span> <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu p-l20">
+                <li class="@yield('jobFeaturedRequest')"><a href="{!! route('jobs.featuredList.index') !!}"><i class="fa fa-circle-o"></i>Featured Request</a></li>
+                <li class="@yield('jobList')"><a href="{!! route('jobs.list') !!}"><i class="fa fa-circle-o"></i>Jobs List</a></li>
+              </ul>
+            </li>
             <li class="@yield('AclMenu') treeview">
               <a href="#">
                 <i class="fa fa-key"></i> <span>ACL</span> <i class="fa fa-angle-left pull-right"></i>
@@ -32,16 +41,15 @@
                 <li class="@yield('userType')"><a href="{!! route('user.type.index') !!}"><i class="fa fa-circle-o"></i>User Type</a></li>
                 <li class="@yield('permission')"><a href="{!! route('permission.index') !!}"><i class="fa fa-circle-o"></i>Permission</a></li>
                 <li class="@yield('route')"><a href="{!! route('route.index') !!}"><i class="fa fa-circle-o"></i>Route</a></li>
-                <li class="@yield('route')"><a href="{!! route('route.index') !!}"><i class="fa fa-circle-o"></i>Users</a></li>
               </ul>
             </li>
-            <li class="@yield('jobsMenu') treeview">
+            <li class="@yield('usersMenu') treeview">
               <a href="#">
-                <i class="fa fa-briefcase"></i> <span>Jobs</span> <i class="fa fa-angle-left pull-right"></i>
+                <i class="fa fa-users"></i> <span>Users</span> <i class="fa fa-angle-left pull-right"></i>
               </a>
               <ul class="treeview-menu p-l20">
-                <li class="@yield('jobFeaturedRequest')"><a href="{!! route('jobs.featuredList.index') !!}"><i class="fa fa-circle-o"></i>Featured Request</a></li>
-                <li class="@yield('jobList')"><a href="{!! route('jobs.list') !!}"><i class="fa fa-circle-o"></i>Jobs List</a></li>
+                <li class="@yield('jobFeaturedRequest')"><a href="{!! route('signUp.admin.create') !!}"><i class="fa fa-circle-o"></i>Admin Create</a></li>
+                <li class="@yield('usersList')"><a href="{!! route('users.list') !!}"><i class="fa fa-circle-o"></i>User List</a></li>
               </ul>
             </li>
 

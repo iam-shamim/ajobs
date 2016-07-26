@@ -43,6 +43,9 @@
     <script>
         $(document).ready(function () {
             $('.delete').click(function (event) {
+                if(!confirm('Are You Sure?')){
+                    return false;
+                }
                 var actionTo=$(this).attr('href');
                 var token=$(this).attr('data-token');
                 var id=$(this).attr('data-id');

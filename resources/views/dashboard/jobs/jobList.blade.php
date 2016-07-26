@@ -40,7 +40,7 @@
                                     <td>{!! $val->companyName !!}</td>
                                     <td>{!! date('M d,Y',strtotime($val->created_at)) !!}</td>
                                     <td>
-                                        <a href="{!! route('jobs.remove',$val->jobID) !!}"  class="m-l5"><i class="fa fa-trash fa-1-2x text-danger" ></i></a>
+                                        <a href="{!! route('jobs.remove',$val->jobID) !!}" onclick="if(confirm('Are you sure?')){return true;}return false;"  class="m-l5"><i class="fa fa-trash fa-1-2x text-danger" ></i></a>
                                     </td>
                                 </tr>
                             @endforeach

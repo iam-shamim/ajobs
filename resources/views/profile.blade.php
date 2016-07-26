@@ -61,7 +61,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">Date of Birth</label>
                                     <div class="col-sm-9">
-                                        <input type="text" id="datepicker" name="birthDay"   value="{!! date('d-m-Y',strtotime($data->DOB))!!}" maxlength="100" class="form-control" >
+                                        <input type="text" id="datepicker" name="birthDay"   value="@if($data->DOB){!! date('d-m-Y',strtotime($data->DOB))!!}@endif" maxlength="100" class="form-control" >
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -108,7 +108,7 @@
             $( "#datepicker" ).datepicker({
                 changeMonth: true,
                 changeYear: true,
-                dateFormat: 'dd/mm/yy'
+                dateFormat: 'dd-mm-yy'
 
             });
         });

@@ -16,6 +16,7 @@
                 <li><a href="{!! route('signup.create') !!}">Signup</a></li>
                 <li><a href="{!! route('login.create') !!}">Login</a></li>
                 @endif
+                <li class="new-ads"><a href="{!! route('newFeaturedJobsQuery') !!}" class="btn btn-ads btn-block">Hot Jobs</a></li>
                 @if(!Auth::check())
                 <li class="dropdown">
                     <a class="dropdown-toggle" href="#" data-toggle="dropdown"><i class="fa fa-user"></i> <strong class="caret"></strong>&nbsp;</a>
@@ -63,16 +64,21 @@
                         </div>
                 </li>
                 @else
+                    <li><a href="{!! route('notification.view') !!}"><i class="fa fa-globe fa-1-2x "></i></a></li>
                     <li class="dropdown">
                         <a class="dropdown-toggle" href="#" data-toggle="dropdown"><i class="fa fa-user"></i><strong class="caret"></strong>&nbsp;</a>
                         <ul class="dropdown-menu">
                             @if(Auth::user()->userType==='Root' OR Auth::user()->userType==='Admin')
                                 <li><a href="{!! route('dashboard.index') !!}"><i class="fa fa-tachometer"></i> Dashboard</a></li>
                             @endif
-                                <li><a href="{!! route('profile') !!}"><i class="fa fa-user"></i> My Profile</a></li>
-                                <li><a href="{!! route('jobs.index') !!}"><i class="fa fa-briefcase"></i> My Jobs</a></li>
-                                <li><a href="{!! route('settings.index') !!}"><i class="fa fa-wrench"></i> Settings</a></li>
-                                <li><a href="{!! route('logout') !!}"><i class="fa fa-sign-out"></i> Log Out</a></li>
+                            <li><a href="{!! route('profile') !!}"><i class="fa fa-user"></i> My Profile</a></li>
+                            @if(Auth::user()->userType==='Company')
+                                <li><a href="{!! route('my.jobs.list') !!}"><i class="fa fa-briefcase"></i> My Jobs</a></li>
+                            @elseif(Auth::user()->userType==='JobSeeker')
+                                <li><a href="{!! route('my.jobs.jobSeeker') !!}"><i class="fa fa-briefcase"></i> My Jobs</a></li>
+                            @endif
+                            <li><a href="{!! route('settings.index') !!}"><i class="fa fa-wrench"></i> Settings</a></li>
+                            <li><a href="{!! route('logout') !!}"><i class="fa fa-sign-out"></i> Log Out</a></li>
                         </ul>
                     </li>
                 @endif

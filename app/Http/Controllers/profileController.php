@@ -60,7 +60,9 @@ class profileController extends Controller
         $data->lastName=htmlspecialchars($input->lastName);
         $data->middleName=htmlspecialchars($input->middleName);
         $data->phone=htmlspecialchars($input->phone);
-        $data->DOB=date('Y/m/d',strtotime($input->birthDay));
+        if(!empty(trim($input->birthDay))){
+            $data->DOB=date('Y-m-d',strtotime($input->birthDay));
+        }
         $data->gender=$input->gender;
         $img=$input->file('profilePic');
         if($img){

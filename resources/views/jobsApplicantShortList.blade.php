@@ -23,8 +23,9 @@
                                         <h3 class="panel-title">
                                             <a href="{!! route('profile.view.about',$value->userID) !!}">{!! $value->firstName.' '.$value->middleName.' '.$value->lastName !!}</a>
                                             @if($value->status==='Applied')
-                                                <small><span class="label label-default">New</span></small></h3>
-                                        @endif
+                                                <small><span class="label label-default">New</span></small>
+                                            @endif
+                                        </h3>
                                     </div>
                                     <div class="panel-body">
                                         <p>{!! $value->coverLetter !!}</p>
@@ -52,7 +53,11 @@
                                         @else
                                             <a class="btn-sm btn-primary pointer reject" applicant-id="{!! $value->applicantsID !!}" action-type="add" href="{!! route('applicant.reject',$value->applicantsID) !!}" data-token="{!! csrf_token() !!}">Reject</a>
                                         @endif
-                                            <a class="btn-sm btn-primary pointer" href="{!! route('interview.create',['jobsID'=>$job->id,'applicantID'=>$value->applicantsID]) !!}">Interview</a>
+                                            @if($value->interviewID)
+                                                <a class="btn-sm btn-success pointer interviewSuccess" href="{!! route('interview.view',['jobsID'=>$job->id,'interviewID'=>$value->interviewID]) !!}">√ Interview</a>
+                                            @else
+                                                <a class="btn-sm btn-primary pointer" href="{!! route('interview.create',['jobsID'=>$job->id,'applicantID'=>$value->applicantsID]) !!}">Interview</a>
+                                            @endif
 
                                     </div>
                                 </div>
@@ -68,6 +73,12 @@
     </section>
     <script>
         $(document).ready(function () {
+            $('.interviewSuccess').hover(function () {
+                $(this).text('View Interview');
+            });
+            $('.interviewSuccess').mouseout(function () {
+                $(this).text('√ Interview');
+            });
             $('.shortList').click(function (event) {
                 var actionTo=$(this).attr('href');
                 var actionType=$(this).attr('action-type');

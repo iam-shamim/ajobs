@@ -27,7 +27,6 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php $sl=0; ?>
                                     @foreach($jobs AS $key=>$val)
                                         <tr>
                                             <td>{!! ++$sl !!}</td>
@@ -39,11 +38,14 @@
                                             </td>
                                             <td><a href="{!! route('my.applicant',$val->jobID) !!}">{!! $val->applicantsCount !!}</a></td>
                                             <td><a href="{!! route('applicant.shortList.view',$val->jobID) !!}">{!! (isset($shortList[$val->jobID]))?$shortList[$val->jobID]:'0' !!}</a></td>
-                                            <td>{!! (isset($interviewsCount[$val->jobID]))?$interviewsCount[$val->jobID]:'0' !!}</td>
+                                            <td><a href="{!! route('jobs.interview.list',$val->jobID) !!}">{!! (isset($interviewsCount[$val->jobID]))?$interviewsCount[$val->jobID]:'0' !!}</a></td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
+                            <div class="text-center">
+                                {!! $jobs->links() !!}
+                            </div>
                         </div>
                     </div>
 

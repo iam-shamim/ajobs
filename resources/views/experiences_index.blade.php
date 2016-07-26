@@ -24,7 +24,7 @@
                                     <div class="col-sm-5 col-md-6 col-lg-7">
                                         <h1 class="no-margin no-line-height"><small>{!! $value->jobTitle !!}</small></h1>
                                         <p class="m-t5">{!! date('d/m/Y',strtotime($value->startedOn)) !!} - @if($value->endedOn==null) Continue @else {!! date('d/m/Y',strtotime($value->endedOn)) !!} @endif</p>
-                                        <p>{!! $value->jobSummary !!}</p>
+                                        <p class="text-justify">{!! $value->jobSummary !!}</p>
                                     </div>
                                     <div class="col-sm-5 col-md-4 col-lg-3">
                                         <div class="institute_avatar">
@@ -50,7 +50,7 @@
                                     </div>
                                     <div class="col-md-4">
                                             <label><strong><i class="fa fa-internet-explorer"></i> Website: </strong></label>
-                                        <p>{!! $value->website !!}</p>
+                                        <a href="{!! $value->website !!}"><p>{!! $value->website !!}</p></a>
                                     </div>
                                     <div class="col-md-3">
                                         <label><strong><i class="fa fa-phone"></i> Phone: </strong></label>
@@ -67,4 +67,30 @@
             </div>
         </div>
     </section>
+    <script>
+        $(document).ready(function () {
+            $('.delete').click(function (event) {
+                if(!confirm('Are you sure?')){
+                    return false;
+                }
+                var actionTo=$(this).attr('href');
+                var token=$(this).attr('data-token');
+                var id=$(this).attr('data-id');
+                $.ajax({
+                    url:actionTo,
+                    type: 'post',
+                    data: {_method: 'delete',_token:token},
+                    beforeSend:function() {
+                        $('[data-id='+id+']').fadeOut();
+                    },
+                    success: function( msg ) {
+                        $('.'+id).fadeOut();
+                    }
+                }).fail(function () {
+                    $('[data-id='+id+']').fadeIn();
+                });
+                return false;
+            })
+        });
+    </script>
 @endsection

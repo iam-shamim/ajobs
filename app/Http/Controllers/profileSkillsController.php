@@ -20,6 +20,7 @@ class profileSkillsController extends Controller
         $mySkills=DB::table('profile_skills')
             ->select('profile_skills.id','skills.skillName','profile_skills.skillRange')
             ->leftJoin('skills','profile_skills.skillID','=','skills.id')
+            ->where('profile_skills.profileID',$currentUserData->id)
             ->get();
         $skills=DB::table('skills')->orderBy('sortInd','asc')->lists('skillName','id');
         return view('profileSkills_index',['data'=>$currentUserData,'mySkills'=>$mySkills,'skills'=>$skills]);
@@ -27,7 +28,7 @@ class profileSkillsController extends Controller
     public function store(Request $input){
         $profilesID=$input->session()->get('profilesID');
         $validator=Validator::make($input->all(),[
-            'skillName'=>'required|unique:profile_skills,skillID,profileID',
+            'skillName'=>'required',
             'skillRange'=>'required|integer|between:1,100'
         ]);
         if($validator->fails()){
@@ -73,6 +74,7 @@ class profileSkillsController extends Controller
         $mySkills=DB::table('profile_skills')
             ->select('profile_skills.id','skills.skillName','profile_skills.skillRange')
             ->leftJoin('skills','profile_skills.skillID','=','skills.id')
+            ->where('profile_skills.profileID',$profilesID)
             ->get();
         $skills=DB::table('skills')->orderBy('sortInd','asc')->lists('skillName','id');
         return view('profileSkillsView_index',['data'=>$data,'id'=>$id,'mySkills'=>$mySkills,'skills'=>$skills,'userType'=>$userType]);

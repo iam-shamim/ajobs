@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests;
+use Illuminate\Http\Response;
 use Route;
 use DB;
 use Session;
@@ -29,6 +30,7 @@ class routeController extends Controller
         return redirect(route('route.index'));
 
     }
+    
 
     /**
      * Show the form for creating a new resource.

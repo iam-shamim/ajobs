@@ -45,7 +45,7 @@
                                     <select id="jobType" class="form-control" name="jobType">
                                         <option value="">Job Type</option>
                                         <option @if(old('jobType')=='FullTime') selected @endif>FullTime</option>
-                                        <option @if(old('jobType')=='ParTime') selected @endif>ParTime</option>
+                                        <option @if(old('jobType')=='PartTime') selected @endif>PartTime</option>
                                         <option @if(old('jobType')=='Internship') selected @endif>Internship</option>
                                         <option @if(old('jobType')=='Contractual') selected @endif>Contractual</option>
                                     </select>

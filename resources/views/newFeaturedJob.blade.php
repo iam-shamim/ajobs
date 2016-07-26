@@ -49,7 +49,9 @@ $currentJobStr=strtotime($currentJobDate);
                                                     </div>
                                                     <div class="item-action-grid pull-right">
                                                         <ul>
+                                                            <!--
                                                             <li><a href="#" data-toggle="tooltip" data-placement="top" title="Save Favorite" class="btn btn-default btn-sm"><i class="fa fa-heart"></i></a></li>
+                                                            -->
                                                             <li><a href="detail" data-toggle="tooltip" data-placement="top" title="Show Details" class="btn btn-success btn-sm"><i class="fa fa-eye"></i></a></li>
                                                         </ul>
                                                     </div>
@@ -66,39 +68,8 @@ $currentJobStr=strtotime($currentJobDate);
                     </div>
                 </div>
                 <div class="col-md-4 col-sm-4">
-                    @if(!Auth::check())
-                        <div class="widget">
-                            <div class="widget-header">
-                                <h3>Quick Signup</h3>
-                            </div>
-                            <div class="widget-body">
-                                <form method="post" action="{!! route('signUp.action') !!}">
-                                    <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                                    <div class="form-group">
-                                        <input type="text" placeholder="User Name" value="{!! old('userName') !!}" name="userName" class="form-control input-lg">
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="text" placeholder="Email" name="email" value="{!! old('email') !!}" class="form-control input-lg">
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="password" placeholder="Password" name="password" class="form-control input-lg">
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="checkbox">
-                                            <label for="terms" class="string optional">
-                                                <input type="checkbox" name="Agree" id="terms" value="Agree">
-                                                I Agree with Term and Conditions
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn btn-block btn-custom">Sign Up</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    @endif
-                        @include('include.rightMenuCategorys')
+                    @include('include.rightMenuSighup')
+                    @include('include.rightMenuCategorys')
                 </div>
             </div>
         </div>

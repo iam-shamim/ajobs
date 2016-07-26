@@ -41,7 +41,7 @@
                                     <td>{!! date('M d,Y',strtotime($val->created_at)) !!}</td>
                                     <td>
                                         <a href="{!! route('jobs.featured',$val->jobID) !!}"  class="m-l5"><i class="fa fa-check-circle-o fa-color enable fa-1-2x" ></i></a>
-                                        <a href="{!! route('jobs.featured.refuse',$val->featuredID) !!}"  class="m-l5"><i class="fa fa-trash fa-1-2x text-danger" ></i></a>
+                                        <a href="{!! route('jobs.featured.refuse',$val->featuredID) !!}" onclick="if(!confirm('Are You Sure?')){return false}"  class="m-l5"><i class="fa fa-trash fa-1-2x text-danger" ></i></a>
                                     </td>
                                 </tr>
                             @endforeach

@@ -6,7 +6,7 @@
                 <div class="col-lg-4">
                     <div class="row">
                         <div class="col-xs-12">
-                            <img src="{!! url('img/institutes/5067FlU1454588100-img.jpg') !!}" class="companyInfoIcon pull-left m-r5">
+                            <img src="{!! url('img/company/'.$job->logo) !!}" alt="Company Icon" class="companyInfoIcon pull-left m-r5">
                             <h2 class="no-line-height m-b0"> <small><a href="{!! route('jobCompany',$job->employersID) !!}">{!! $job->companyName !!}</a></small></h2>
                             <p class="">{!! $job->companySummary !!}</p>
                             <hr>
@@ -16,6 +16,7 @@
                         <div class="col-md-12 col-sm-6 col-sm-offset-3 col-lg-offset-0">
                             <table>
                                 <h2 class="m-t15"><small><strong>Details</strong></small></h2>
+                                <tr><td><i class="fa fa-user  m-r10"></i></td><td>Posted BY: <a href="{!! route('profile.view.about',$job->userID) !!}">{!! $job->firstName.' '.$job->middleName.' '.$job->lastName !!}</a></td></tr>
                                 <tr><td><i class="fa fa-briefcase  m-r10"></i></td><td><strong>{!! $job->jobType!!}</strong></td></tr>
                                 <tr><td><i class="fa fa-location-arrow"></i></td><td>{!! $job->jobLocation!!}</td></tr>
                                 <tr><td><i class="fa fa-calendar"></i></td><td>Posted: {!! date('M d,Y',strtotime($job->jobsPosted)) !!}</td></tr>
@@ -78,7 +79,6 @@
                                     @endif
                                 @endif
                                 @if(Auth::check() AND Auth::user()->userType=='JobSeeker')
-                                        <a href="#" class="btn btn-xs btn-primary" title="Save Favorite"><i class="fa fa-heart"></i></a>
                                     @if($applicantsStatus==false)
                                         <button data-toggle="modal" data-target="#myModal" class="btn btn-xs btn-primary">Apply</button>
                                     @else
@@ -92,7 +92,7 @@
                                     @if($job->featuredJob===NULL)
                                         <a href="{!! route('jobs.featured.apply',$id) !!}" class="btn-sm btn-primary">Apply For Featured</a>
                                     @endif
-                                    <a href="{!! route('jobs.destroy',$id) !!}" class="btn-sm btn-danger">Delete Job</a>
+                                    <a href="{!! route('jobs.destroy',$id) !!}" class="btn-sm btn-danger" onclick="if(!confirm('Are you sure?')){return false;}">Delete Job</a>
                             @endif
                             @if(Auth::check() AND $applicantsStatus==false)
                                     <!-- model start-->

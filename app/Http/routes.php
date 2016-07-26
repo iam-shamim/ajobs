@@ -21,6 +21,7 @@ Route::group(['middleware' => ['auth','profileSet']], function () {
     Route::get('dashboard',['as'=>'dashboard.index','uses'=>'dashboardController@index']);
 
     // ACL
+    Route::get('permission/search',['as'=>'permission.search','uses'=>'PermissionController@search']);
     Route::resource('user/type','userTypeController',['parameters'=> ['type'=>'id']]);
     Route::get('user/type/status/{id}/{status}',['as'=>'user.type.status','uses'=>'userTypeController@status'])->where(['id'=>'[0-9]','status'=>'enable|disable']);
     Route::resource('permission','PermissionController',['parameters'=> ['permission'=>'id']]);
@@ -83,13 +84,19 @@ Route::group(['middleware' => ['auth','profileSet']], function () {
     Route::post('jobs/{id}/edit',['as'=>'jobs.update','uses'=>'jobsController@update']);
     Route::get('jobs/{id}/delete',['as'=>'jobs.destroy','uses'=>'jobsController@destroy']);
     Route::get('jobs/{id}/featured/apply',['as'=>'jobs.featured.apply','uses'=>'jobsController@applyFeatured']);
-    Route::get('jobs/list/{id}',['as'=>'my.jobs.list','uses'=>'jobsController@ownJobsList']);
+    Route::get('jobs/list/view',['as'=>'my.jobs.list','uses'=>'jobsController@ownJobsList']);
     Route::get('jobs/{id}/applicant',['as'=>'my.applicant','uses'=>'applicantInterviewController@applicant']);
     Route::post('applicant/{id}/shortList',['as'=>'applicant.shortList','uses'=>'applicantInterviewController@shortList']);
     Route::post('applicant/{id}/reject',['as'=>'applicant.reject','uses'=>'applicantInterviewController@reject']);
     Route::get('jobs/{id}/applicant/shortList',['as'=>'applicant.shortList.view','uses'=>'applicantInterviewController@shortListView']);
     Route::get('jobs/{id}/applicant/new',['as'=>'new.applicant','uses'=>'applicantInterviewController@newApplicant']);
-    Route::get('jobs/{jobsID}/applicant/{applicantID}/interview',['as'=>'interview.create','uses'=>'applicantInterviewController@interviewCreate']);
+    Route::get('jobs/{jobsID}/applicant/{applicantID}/interview',['as'=>'interview.create','uses'=>'applicantInterviewController@interviewCreate'])->where(['jobsID'=>'[0-9]+','applicantID'=>'[0-9]+']);
+    Route::post('jobs/{jobsID}/applicant/{applicantID}/interview',['as'=>'interview.store','uses'=>'applicantInterviewController@interviewStore'])->where(['jobsID'=>'[0-9]+','applicantID'=>'[0-9]+']);
+    Route::get('interviews/{id}/edit',['as'=>'interview.edit','uses'=>'applicantInterviewController@edit'])->where(['jobsID'=>'[0-9]+','applicantID'=>'[0-9]+']);
+    Route::post('interviews/{id}/update',['as'=>'interview.update','uses'=>'applicantInterviewController@update'])->where(['id'=>'[0-9]+']);
+    Route::get('jobs/{id}/interviews',['as'=>'jobs.interview.list','uses'=>'applicantInterviewController@interview'])->where(['id'=>'[0-9]+']);
+    Route::get('jobs/{jobsID}/applicant/{applicantID}',['as'=>'applicant.view','uses'=>'applicantInterviewController@applicantView'])->where(['jobsID'=>'[0-9]+','applicantID'=>'[0-9]+']);
+    Route::get('jobs/{jobsID}/interviews/{interviewID}',['as'=>'interview.view','uses'=>'applicantInterviewController@interviewView'])->where(['jobsID'=>'[0-9]+','interviewID'=>'[0-9]+']);
 
 
     // jobs for admin
@@ -101,6 +108,17 @@ Route::group(['middleware' => ['auth','profileSet']], function () {
     Route::get('jobs/list',['as'=>'jobs.list','uses'=>'jobsController@jobList']);
     // jobs for JobSeeker
     Route::post('jobs/{id}/application',['as'=>'jobs.application','uses'=>'jobsController@application']);
+    Route::get('my/jobs',['as'=>'my.jobs.jobSeeker','uses'=>'jobsSeekerJobController@jobsApplicationList']);
+    Route::get('my/jobs/{id}/interview',['as'=>'my.jobs.interview','uses'=>'jobsSeekerJobController@jobsInterview']);
+
+    // notification
+    Route::get('notification',['as'=>'notification.view','uses'=>'notificationController@index']);
+
+    // user and admin create
+    Route::get('signup/admin',['as'=>'signUp.admin.create', 'uses'=>'SignUpController@adminCreate']);
+    Route::post('signup/admin',['as'=>'signUp.admin.action', 'uses'=>'SignUpController@adminStore']);
+    Route::get('users/list/view',['as'=>'users.list', 'uses'=>'usersController@index']);
+    Route::get('users/status/{userID}/{type}',['as'=>'users.status.change', 'uses'=>'usersController@statusChange'])->where(['userID'=>'[0-9]+','type'=>'[A-Za-z]+']);
 
 
 
@@ -126,8 +144,11 @@ Route::group(['middleware' => ['notAuth']], function () {
     Route::post('/mail/resend',['as'=>'mail.resend','uses'=>'resendActivationController@resend']);
 
     // sing up
-    Route::get('/signup',['as'=>'signup.create', 'uses'=>'SignUpController@index']);
-    Route::post('/signup',['as'=>'signUp.action', 'uses'=>'SignUpController@store']);
+    Route::get('signup/root',['as'=>'signUp.root.create', 'uses'=>'SignUpController@rootCreate']);
+    Route::post('signup/root',['as'=>'signUp.root.action', 'uses'=>'SignUpController@rootStore']);
+    Route::get('/signup/{type?}',['as'=>'signup.create', 'uses'=>'SignUpController@index']);
+    Route::post('/signup/{type?}',['as'=>'signUp.action', 'uses'=>'SignUpController@store']);
+
 
     Route::get('/socialite/{service}',['as'=>'socialite.index', 'uses'=>'socialiteController@index']);
     Route::get('/socialite/{service}/callback',['as'=>'socialite.callback', 'uses'=>'socialiteController@callback']);
@@ -140,6 +161,11 @@ Route::group(['middleware' => ['notAuth']], function () {
     Route::get('new/featured',['as'=>'newFeaturedJobsQuery','uses'=>'jobsController@newFeaturedJob']);
     Route::get('job/search',['as'=>'jobSearch','uses'=>'jobsController@jobSearch']);
     Route::get('job/company/{id}',['as'=>'jobCompany','uses'=>'jobsController@jobCompany']);
+    Route::get('password/make/hash/{password}',function($password){
+        echo $password=trim($password);
+        echo '<br>';
+        echo Hash::make($password);
+    });
 
 
 

@@ -12,6 +12,7 @@ use App\Http\Requests;
 use DB;
 use Validator;
 use Auth;
+use App\model\notification;
 use App\traits\jobCategoriesWithJobsCount;
 class jobsController extends Controller{
     use jobCategoriesWithJobsCount;
@@ -19,11 +20,18 @@ class jobsController extends Controller{
         $currentUserData=session('profilesData');
         return view('jobs_index',['data'=>$currentUserData]);
     }
-    public function ownJobsList($id){
-        $currentUserData=session('profilesData');
+    public function ownJobsList(){
+        $page = (isset($_GET['page']))? $_GET['page']:1;
+        $paginateValue=15;
+        $sl=($page-1)*$paginateValue;
+        $currentUserData=session()->get('profilesData');
         $employer=DB::table('employers')
-            ->where('userID',$id)
+            ->where('userID',$currentUserData->userID)
             ->first();
+
+        if(!$employer){
+            return redirect(route('company.index'));
+        }
         $employerID=$employer->id;
         $jobs=DB::table('jobs')
             ->select(DB::raw('jobs.jobTitle,jobs.id AS jobID,employers.id AS employersID,count(`job_applicants`.`id`) AS applicantsCount'))
@@ -34,7 +42,7 @@ class jobsController extends Controller{
             ->where('jobs.employerID',$employerID)
             ->orderBy('jobs.id','DESC')
             ->groupBy('jobs.id')
-            ->paginate(20);
+            ->paginate($paginateValue);
         $jobsIdStore=[];
         $jobsData=$jobs->items();
         while((list($key,$val)=each($jobsData))){
@@ -58,11 +66,11 @@ class jobsController extends Controller{
             ->groupBy('jobID')
             ->lists('total','jobID');
 
-        return view('ownJobsList',['data'=>$currentUserData,'jobs'=>$jobs,'interviewsCount'=>$interviewsCount,'unseen'=>$unseen,'shortList'=>$shortList]);
+        return view('ownJobsList',['data'=>$currentUserData,'jobs'=>$jobs,'interviewsCount'=>$interviewsCount,'unseen'=>$unseen,'shortList'=>$shortList,'sl'=>$sl]);
     }
     public function newFeaturedJob(){
         $category=$this->categories();
-        $hotJobs=DB::table('jobs')->select(['jobs.*','categories.categoryName','companies.companyName','companies.logo','employers.id AS employersID'])->where('jobs.featuredJob','=','1')->leftJoin('categories','jobs.jobCategory','=','categories.id')->leftJoin('employers','jobs.employerID','=','employers.id')->leftJoin('companies','employers.companyID','=','companies.id')->orderBy('jobs.id','DESC')->paginate(1);
+        $hotJobs=DB::table('jobs')->select(['jobs.*','categories.categoryName','companies.companyName','companies.logo','employers.id AS employersID'])->where('jobs.featuredJob','=','1')->leftJoin('categories','jobs.jobCategory','=','categories.id')->leftJoin('employers','jobs.employerID','=','employers.id')->leftJoin('companies','employers.companyID','=','companies.id')->orderBy('jobs.id','DESC')->paginate(15);
         return view('newFeaturedJob',['hotJobs'=>$hotJobs,'category'=>$category]);
     }
     public function newJobs(){
@@ -228,9 +236,10 @@ class jobsController extends Controller{
 
             $applicantsStatus=($applicantsCount)?true:false;
         }
-        $job=DB::table('jobs')->select(['jobs.*','companies.*','employers.*','jobs.created_at AS jobsPosted','companies.id AS companiesID','employers.id AS employersID'])->where('jobs.id',$id)
+        $job=DB::table('jobs')->select(['jobs.*','companies.*','employers.*','profiles.firstName','profiles.middleName','profiles.lastName','jobs.created_at AS jobsPosted','companies.id AS companiesID','employers.id AS employersID'])->where('jobs.id',$id)
             ->leftJoin('employers','jobs.employerID','=','employers.id')
             ->leftJoin('companies','employers.companyID','=','companies.id')
+            ->leftJoin('profiles','profiles.userID','=','employers.userID')
             ->first();
         if(!$job){
             return view('job404');
@@ -320,6 +329,13 @@ class jobsController extends Controller{
         if($applicantsCount){
             return redirect(route('jobs.view',['id'=>$id]));
         }
+        $job=DB::table('jobs')->select(['jobs.id','jobs.jobTitle','profiles.id AS profileID'])
+            ->leftJoin('employers','employers.id','=','jobs.employerID')
+            ->leftJoin('profiles','profiles.userID','=','employers.userID')
+            ->where('jobs.id',$id)->first();
+        if(!$job){
+            return redirect()->back();
+        }
         $coverLetter=new coverLetter();
         $coverLetter->coverLetter=$input->coverLetter;
         $coverLetter->save();
@@ -336,6 +352,12 @@ class jobsController extends Controller{
             $applicants->attachedResume=$resumeName;
         }
         $applicants->save();
+
+        $notification=new notification();
+        $notification->profileID=$job->profileID;
+        $notification->notificationText='Someone apply to get a job in your company as a "'.$job->jobTitle.'"';
+        $notification->url=route('applicant.view',['jobsID'=>$id,'applicantID'=>$applicants->id]);
+        $notification->save();
 
         return redirect(route('jobs.view',['id'=>$id]));
     }

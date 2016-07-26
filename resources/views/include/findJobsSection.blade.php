@@ -10,6 +10,7 @@
                 <div class="col-sm-5 search-input">
                     <input type="text" class="form-control input-lg search-first" value="{!! isset($jobLocation)?$jobLocation:null !!}" name="jobLocation" placeholder="Location">
                 </div>
+                <input type="hidden" name="category" value="any">
                 <div class="col-sm-2 search-input">
                     <button class="btn btn-custom btn-block btn-lg search-input-icon"><i class="fa fa-search"></i></button>
                 </div>

@@ -58,13 +58,14 @@ class loginController extends Controller
                 if(isset($input->redirectTo)){
                     return redirect()->intended($input->redirectTo);
                 }
-
                 return redirect()->intended(url('/profile'));
             }else if($userStatus=='InActive'){
                 $input->session()->put(['userName'=>Auth::user()->userName,'password'=>$input->password,'userID'=>Auth::user()->id,'resend'=>url('mail/resend')]);
+                session()->forget('profilesData');
                 Auth::logout();
                 return redirect(route('activation.code.form'));
             }else{
+                session()->forget('profilesData');
                 Auth::logout();
                 $validator->errors()->add('errorBlocked', 'You are blocked. please contact to admin.');
                     return redirect(route('login.create'))->withErrors($validator);
@@ -128,6 +129,7 @@ class loginController extends Controller
                 return redirect()->intended(url('/profile'));
             }else{
                 //$input->session()->put(['userNames'=>Auth::user()->userName,'password'=>$password,'resend'=>'http://location/resend']);
+                session()->forget('profilesData');
                 Auth::logout();
                 $validator->errors()->add('errorInActive', 'Activation code not matched.');
                 return redirect(route('activation.code.form'))
@@ -135,6 +137,7 @@ class loginController extends Controller
             }
 
         }else{
+            session()->forget('profilesData');
             Auth::logout();
             $validator->errors()->add('errorBlocked', 'You are blocked. please contact to admin.');
             return redirect(route('activation.code.form'))
@@ -143,6 +146,7 @@ class loginController extends Controller
 
     }
     public function logout(){
+        session()->forget('profilesData');
         Auth::logout();
         return redirect(url(''));
     }

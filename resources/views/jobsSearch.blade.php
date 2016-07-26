@@ -101,7 +101,6 @@ $currentJobStr=strtotime($currentJobDate);
                                                 </div>
                                                 <div class="item-action-grid pull-right">
                                                     <ul>
-                                                        <li><a href="#" data-toggle="tooltip" data-placement="top" title="Save Favorite" class="btn btn-default btn-sm"><i class="fa fa-heart"></i></a></li>
                                                         <li><a href="{!! route('jobs.view',$job->id) !!}" data-toggle="tooltip" data-placement="top" title="Show Details" class="btn btn-success btn-sm"><i class="fa fa-eye"></i></a></li>
                                                     </ul>
                                                 </div>
@@ -119,40 +118,6 @@ $currentJobStr=strtotime($currentJobDate);
             </div>
         </div>
     </section>
-    <div class="counter">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="item-counter">
-                        <span class="item-icon"><i class="fa fa-database"></i></span>
-                        <div class="item-count">7803</div>
-                        <span class="item-info">Items</span>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="item-counter">
-                        <span class="item-icon"><i class="fa fa-user-plus"></i></span>
-                        <div class="item-count">427</div>
-                        <span class="item-info">Sellers</span>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="item-counter">
-                        <span class="item-icon"><i class="fa fa-map-marker"></i></span>
-                        <div  class="item-count">639</div>
-                        <span class="item-info">Locations</span>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="item-counter">
-                        <span class="item-icon"><i class="fa fa-users"></i></span>
-                        <div class="item-count">1548</div>
-                        <span class="item-info">Members</span>
-                    </div>
-                </div>
-            </div>
-        </div> <!-- / .counter -->
-    </div>
     <style>
         .item .item-title h4{font-size:inherit;}
 

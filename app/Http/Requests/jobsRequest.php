@@ -25,7 +25,7 @@ class jobsRequest extends Request
     {
         return [
             'jobTitle'=>'required|max:100',
-            'jobSummary'=>'required|min:30|max:1000',
+            'jobSummary'=>'required|min:30|max:2000',
             'jobDescription'=>'required|min:100',
             'jobType'=>'required',
             'jobLocation'=>'required|max:100',

@@ -38,7 +38,7 @@
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-sm-5 col-md-6 col-lg-7">
-                                        <h1><small>{!! $myCompany->companyName !!}</small></h1>
+                                        <h1><small><a href="{!! route('jobCompany',$myCompany->companieID) !!}">{!! $myCompany->companyName !!}</a></small></h1>
                                         <p class="pull-left m-r15">City: {!! $myCompany->city !!}</p>
                                         <p class="pull-left m-r15 m-l10">District: {!! $myCompany->district !!}</p>
                                         <p class=" m-l10">Post Code: {!! $myCompany->postcode !!}</p>

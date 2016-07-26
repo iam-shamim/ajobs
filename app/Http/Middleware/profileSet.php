@@ -15,8 +15,7 @@ class profileSet
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle($request, Closure $next)
-    {
+    public function handle($request, Closure $next){
         if(!session()->get('profilesData')){
             if(Auth::check()){
                 $data=DB::table('profiles')->where('userID',Auth::user()->id)->first();

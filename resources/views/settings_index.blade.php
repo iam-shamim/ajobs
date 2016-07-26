@@ -70,7 +70,7 @@
                                         </div>
                                     </div>
                                     <div class="panel-footer">
-                                        <button class="btn btn-sm btn-custom"><i class="fa fa-pencil"></i> Update</button>
+                                        <button class="btn btn-xs btn-custom"><i class="fa fa-pencil"></i> Update</button>
                                     </div>
                                 </div>
                             </form>

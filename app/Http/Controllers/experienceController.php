@@ -126,7 +126,9 @@ class experienceController extends Controller
         $data->profileID=$profilesID;
         $data->companyID=$companyID;
         $data->startedOn=date('Y-m-d',strtotime($input->startedOn));
-        $data->endedOn=date('Y-m-d',strtotime($input->endedOn));
+        if(!empty($input->endedOn)){
+            $data->endedOn=date('Y-m-d',strtotime($input->endedOn));
+        }
         $data->jobSummary=htmlspecialchars($input->jobSummary);
         $data->jobTitle=htmlspecialchars($input->jobTitle);
         $data->save();

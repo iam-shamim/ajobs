@@ -28,7 +28,8 @@ class companyController extends Controller{
         if($userType!=='Company'){
             return view('404');
         }
-        $data=session('profilesData');
+        $data=Profile::where('userID',$id)->first();
+        $data->profilePic=($data->profilePic===NULL)? 'default.icon.png':$data->profilePic;
         $url=url('/img/company');
         $sql="SELECT companies.id as companieID,companyName,city,district,postcode,address,phone,email,website,CONCAT('{$url}/',logo) AS logo,employers.* FROM `employers` LEFT JOIN `companies` ON `employers`.`companyID`=`companies`.`id`  WHERE employers.userID=$id";
         $myCompany=DB::select(DB::raw($sql));

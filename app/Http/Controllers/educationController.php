@@ -48,7 +48,7 @@ class educationController extends Controller{
                 'instituteName'=>'required',
                 'city'=>'required',
                 'district'=>'required',
-                'instituteCode'=>'required|unique:institutes,instituteCode',
+                'instituteCode'=>'required',
                 'address'=>'required',
                 'degree'=>'required',
                 'subject'=>'required',
@@ -85,7 +85,7 @@ class educationController extends Controller{
         $data->degreeID=$input->degree;
         $data->subjectName=htmlspecialchars($input->subject);
         $data->startedOn=date('Y-m-d',strtotime($input->startedOn));
-        if(!empty($data->endedOn)){
+        if(!empty($input->endedOn)){
             $data->endedOn=date('Y-m-d',strtotime($input->endedOn));
         }
         $data->save();

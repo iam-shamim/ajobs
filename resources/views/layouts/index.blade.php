@@ -36,9 +36,7 @@
         <div class="container">
             <ul class="pull-left footer-menu">
                 <li>
-                    <a href="index"> Home </a>
-                    <a href="about"> About us </a>
-                    <a href="contact"> Contact us </a>
+                    <a href="{!! url('/') !!}"> Home </a>
                 </li>
             </ul>
             <ul class="pull-right footer-menu">
